@@ -1,8 +1,8 @@
 package cladimed2skos;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -17,15 +17,14 @@ public class CladimedPreProcessor {
 		this.workbook = workbook;
 	}
 
-	public boolean execute(int sheet) {
+	public boolean execute(int sheet, Map<String, PrimaryEntry> hashMap) {
 
-		List<PrimaryEntry> list = new ArrayList<PrimaryEntry>();
 		Sheet firstSheet = workbook.getSheetAt(sheet);
 		Iterator<Row> iterator = firstSheet.iterator();
-		long rowNumber=1;
-		
+		long rowNumber = 1;
+
 		// jump header
-		if(iterator.hasNext()){
+		if (iterator.hasNext()) {
 			iterator.next();
 			rowNumber++;
 		}
@@ -37,7 +36,7 @@ public class CladimedPreProcessor {
 			Iterator<Cell> cellIterator = nextRow.cellIterator();
 			primaryEntry = new PrimaryEntry();
 			rowsProcessed++;
-			
+
 			while (cellIterator.hasNext()) {
 				Cell nextCell = cellIterator.next();
 				int columnIndex = nextCell.getColumnIndex();
@@ -77,47 +76,46 @@ public class CladimedPreProcessor {
 
 			}
 			primaryEntry.setRowNumber(rowNumber++);
-			list.add(primaryEntry);
-			if(rowsProcessed%100==0){
-				System.out.println("RowsReaded: "+rowsProcessed);
+			hashMap.put(primaryEntry.getCode(), primaryEntry);
+			if (rowsProcessed % 100 == 0) {
+				System.out.println("RowsReaded: " + rowsProcessed);
 			}
 		}
-		
+
 		System.out.println("Checking for inconsistencies...");
-		boolean sucess=true;
-		String composedCode="";
-		for(PrimaryEntry pe:list){
-			composedCode = pe.getF()+pe.getSf()+pe.getG()+pe.getSg();
-			if(pe.getNs().length() == 1){
-				composedCode = composedCode + "0"+pe.getNs();
-			}else{
-				composedCode = composedCode +pe.getNs();
+		boolean sucess = true;
+		String composedCode = "";
+
+		for (HashMap.Entry<String, PrimaryEntry> entry : hashMap.entrySet()) {
+
+			composedCode = entry.getValue().getF() + entry.getValue().getSf() + entry.getValue().getG() + entry.getValue().getSg();
+			if (entry.getValue().getNs().length() == 1) {
+				composedCode = composedCode + "0" + entry.getValue().getNs();
+			} else {
+				composedCode = composedCode + entry.getValue().getNs();
 			}
-			
+
 			// begin check
-			if(pe.getCode().equals("")){
-				pe.addErrorDescription("No code present.");
+			if (entry.getValue().getCode().equals("")) {
+				entry.getValue().addErrorDescription("No code present.");
 			}
-			if(pe.getLabel().equals("")){
-				pe.addErrorDescription("No label present.");
+			if (entry.getValue().getLabel().equals("")) {
+				entry.getValue().addErrorDescription("No label present.");
 			}
-			if(!composedCode.equals(pe.getCode())){
-				pe.addErrorDescription("Code data and code format are different");
+			if (!composedCode.equals(entry.getValue().getCode())) {
+				entry.getValue().addErrorDescription("Code data and code format are different");
 			}
-			
-			if(!pe.getErrorDescription().isEmpty()){
-				System.out.println("Error on row: "+pe.getRowNumber());
-				System.out.println(pe.toString());
-				sucess=false;
+
+			if (!entry.getValue().getErrorDescription().isEmpty()) {
+				//System.out.println("Error on row: " + entry.getValue().getRowNumber());
+				//System.out.println(entry.getValue().toString());
+				sucess = false;
 			}
-			
+
 		}
-		
 		
 
 		return sucess;
 	}
-	
-	
 
 }

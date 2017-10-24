@@ -1,5 +1,8 @@
 package cladimed2skos;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PrimaryEntry {
 
 	public PrimaryEntry() {
@@ -14,6 +17,8 @@ public class PrimaryEntry {
 		obs2="";
 		obs3="";
 		errorDescription="";
+		broaderConcept="";
+		narrowerConcepts = new ArrayList<String>();
 	}
 
 	private String f;
@@ -28,11 +33,31 @@ public class PrimaryEntry {
 	private String obs3;
 	private long rowNumber;
 	private String errorDescription;
+	private String broaderConcept;
+	private List<String> narrowerConcepts;
 	
 	
 	
 	
 	
+	public String getBroaderConcept() {
+		return broaderConcept;
+	}
+	public void setBroaderConcept(String broaderConcept) {
+		this.broaderConcept = broaderConcept;
+	}
+	public List<String> getNarrowerConcepts() {
+		return narrowerConcepts;
+	}
+	public void setNarrowerConcepts(List<String> narrowerConcept) {
+		this.narrowerConcepts = narrowerConcept;
+	}
+	public void addNarrowerConcepts(String narrowerConcept) {
+		this.narrowerConcepts.add(narrowerConcept);
+	}
+	public void setErrorDescription(String errorDescription) {
+		this.errorDescription = errorDescription;
+	}
 	public String getErrorDescription() {
 		return errorDescription;
 	}
@@ -108,9 +133,11 @@ public class PrimaryEntry {
 	@Override
 	public String toString() {
 		return "PrimaryEntry [f=" + f + ", sf=" + sf + ", g=" + g + ", sg=" + sg + ", ns=" + ns + ", code=" + code
-				+ ", label=" + label + ", obs1=" + obs1 + ", obs2=" + obs2 + ", obs3=" + obs3 + ", rowNumber="
-				+ rowNumber + ", errorDescription=" + errorDescription + "]";
-	}	
+				+ ", rowNumber=" + rowNumber + ", broaderConcept=" + broaderConcept + ", narrowerConcepts="
+				+ narrowerConcepts + "]";
+	}
+
+	
 	
 	
 }
