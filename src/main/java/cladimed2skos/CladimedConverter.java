@@ -42,6 +42,9 @@ public class CladimedConverter {
 	
 	public static final String SKOS_COMCEPT_CLOSE="</skos:Concept>";
 	
+	public static final String RDF_CLOSE="</rdf:RDF>";
+
+	
 	
 	// conditionals
 	
@@ -63,7 +66,8 @@ public class CladimedConverter {
 	public static final String ABANDON2016 = "Abandon décembre 2016";
 	public static final String MODIFIED2016 = "Modification dénomination décembre 2016";
 	public static final String MODIFIEDAT = "2016-12-31";
-	
+	public static final String DOCTODATE2016 = "2016";	
+	public static final String DOCTODATE2017 = "2017";	
 	
 	public static final String OWL_DEPRECATED = "<owl:deprecated rdf:resource=\"http://www.w3.org/2002/07/owl#deprecated\">true</owl:deprecated>";
 	
@@ -423,7 +427,7 @@ public class CladimedConverter {
 		
 		
 		// Generate FILE
-		String filePath = destinationFolder+"/cladimed_classif_simple_and_complete_skos.txt";
+		String filePath = destinationFolder+"/cladimed.rdf";
 		String headerFilePath = destinationFolder+"/cladimed_header_metadata.txt";
 		System.out.println("File: "+ filePath);
 		File file = new File(filePath);
@@ -453,8 +457,24 @@ public class CladimedConverter {
 				item = entry.getValue();
 				if(item.getErrorDescription().isEmpty()){
 					line = SKOS_COMCEPT_OPEN_PRE + item.getCode()+SKOS_COMCEPT_OPEN_POS;
+					// Issue 2 for abandon on LABEL
+					if(item.getLabel().toUpperCase().indexOf("ABAN")>-1 && item.getObs1().isEmpty()){
+						line += SKOS_PREF_LABEL_OPEN + item.getCode().toLowerCase()+SKOS_PREF_LABEL_CLOSE;
+						line += SKOS_HIDDEN_LABEL_OPEN + item.getCode().toUpperCase()+SKOS_HIDDEN_LABEL_CLOSE;
+						line += OWL_DEPRECATED;
+						line += SKOS_CHANGE_NOTE_OPEN+item.getLabel()+SKOS_CHANGE_NOTE_CLOSE;
+					}else{
+						line += SKOS_PREF_LABEL_OPEN + item.getLabel().toLowerCase()+SKOS_PREF_LABEL_CLOSE;
+						line += SKOS_HIDDEN_LABEL_OPEN + item.getLabel().toUpperCase()+SKOS_HIDDEN_LABEL_CLOSE;
+					}
+					if(item.getLabel().toUpperCase().indexOf("ABAN")>-1 && !item.getObs1().isEmpty()){
+						if(item.getObs1().equalsIgnoreCase(ABANDON2016)){
+							line += PROV_INVALIDATED_AT_OPEN+MODIFIEDAT+PROV_INVALIDATED_AT_CLOSE;
+						}
+					}
+					// END issue 2
 					line += SKOS_NOTATION_OPEN + item.getCode()+ SKOS_NOTATION_CLOSE;
-					line += SKOS_DCT_OPEN + "2016" + SKOS_DCT_CLOSE;
+					line += SKOS_DCT_OPEN + DOCTODATE2016 + SKOS_DCT_CLOSE;
 					line += SKOS_CLASSIF_SIMPLE;
 					// variable part
 					if(item.getSf().isEmpty()){
@@ -468,24 +488,7 @@ public class CladimedConverter {
 						}
 					}
 					line += SKOS_COMCEPT_CLOSE;
-					// Issue 2 for abandon on LABEL
-					if(item.getLabel().toUpperCase().indexOf("ABAN")>-1 && item.getObs1().isEmpty()){
-						line += OWL_DEPRECATED;
-						line += SKOS_CHANGE_NOTE_OPEN+item.getLabel()+SKOS_CHANGE_NOTE_CLOSE;
-						line += SKOS_PREF_LABEL_OPEN + item.getCode().toLowerCase()+SKOS_PREF_LABEL_CLOSE;
-						line += SKOS_HIDDEN_LABEL_OPEN + item.getCode().toUpperCase()+SKOS_HIDDEN_LABEL_CLOSE;
-
-					}else{
-						line += SKOS_PREF_LABEL_OPEN + item.getLabel().toLowerCase()+SKOS_PREF_LABEL_CLOSE;
-						line += SKOS_HIDDEN_LABEL_OPEN + item.getLabel().toUpperCase()+SKOS_HIDDEN_LABEL_CLOSE;
-					}
-					if(item.getLabel().toUpperCase().indexOf("ABAN")>-1 && !item.getObs1().isEmpty()){
-						if(item.getObs1().equalsIgnoreCase(ABANDON2016)){
-							line += PROV_INVALIDATED_AT_OPEN+MODIFIEDAT+PROV_INVALIDATED_AT_CLOSE;
-						}
-					}
-					// END issue 2
-					
+				
 					
 					out.write(line); 
 			        out.newLine();          
@@ -500,12 +503,28 @@ public class CladimedConverter {
 				item = entry.getValue();
 				if(item.getErrorDescription().isEmpty()){
 					line = SKOS_COMCEPT_OPEN_PRE + item.getCode()+SKOS_COMCEPT_OPEN_POS;
+					// Issue 2 for abandon on LABEL
+					if(item.getLabel().toUpperCase().indexOf("ABAN")>-1 && item.getObs1().isEmpty()){
+						line += SKOS_PREF_LABEL_OPEN + item.getCode().toLowerCase()+SKOS_PREF_LABEL_CLOSE;
+						line += SKOS_HIDDEN_LABEL_OPEN + item.getCode().toUpperCase()+SKOS_HIDDEN_LABEL_CLOSE;
+						line += OWL_DEPRECATED;
+						line += SKOS_CHANGE_NOTE_OPEN+item.getLabel()+SKOS_CHANGE_NOTE_CLOSE;
+					}else{
+						line += SKOS_PREF_LABEL_OPEN + item.getLabel().toLowerCase()+SKOS_PREF_LABEL_CLOSE;
+						line += SKOS_HIDDEN_LABEL_OPEN + item.getLabel().toUpperCase()+SKOS_HIDDEN_LABEL_CLOSE;
+					}
+					if(item.getLabel().toUpperCase().indexOf("ABAN")>-1 && !item.getObs1().isEmpty()){
+						if(item.getObs1().equalsIgnoreCase(ABANDON2016)){
+							line += PROV_INVALIDATED_AT_OPEN+MODIFIEDAT+PROV_INVALIDATED_AT_CLOSE;
+						}
+					}
+					// END issue 2
 					line += SKOS_NOTATION_OPEN + item.getCode()+ SKOS_NOTATION_CLOSE;
 					line += SKOS_DCT_OPEN;
 					if(item.getObs1().equalsIgnoreCase(NEW2017)){
-						line += "2017";
+						line += DOCTODATE2017;
 					}else{
-						line += "2016";
+						line += DOCTODATE2016;
 					}
 					line +=SKOS_DCT_CLOSE;
 					// lines below commented due the issue 2 
@@ -536,23 +555,7 @@ public class CladimedConverter {
 						
 					}
 					line += SKOS_COMCEPT_CLOSE;
-					// Issue 2 for abandon on LABEL
-					if(item.getLabel().toUpperCase().indexOf("ABAN")>-1 && item.getObs1().isEmpty()){
-						line += OWL_DEPRECATED;
-						line += SKOS_CHANGE_NOTE_OPEN+item.getLabel()+SKOS_CHANGE_NOTE_CLOSE;
-						line += SKOS_PREF_LABEL_OPEN + item.getCode().toLowerCase()+SKOS_PREF_LABEL_CLOSE;
-						line += SKOS_HIDDEN_LABEL_OPEN + item.getCode().toUpperCase()+SKOS_HIDDEN_LABEL_CLOSE;
 
-					}else{
-						line += SKOS_PREF_LABEL_OPEN + item.getLabel().toLowerCase()+SKOS_PREF_LABEL_CLOSE;
-						line += SKOS_HIDDEN_LABEL_OPEN + item.getLabel().toUpperCase()+SKOS_HIDDEN_LABEL_CLOSE;
-					}
-					if(item.getLabel().toUpperCase().indexOf("ABAN")>-1 && !item.getObs1().isEmpty()){
-						if(item.getObs1().equalsIgnoreCase(ABANDON2016)){
-							line += PROV_INVALIDATED_AT_OPEN+MODIFIEDAT+PROV_INVALIDATED_AT_CLOSE;
-						}
-					}
-					// END issue 2
 					
 					out.write(line); 
 			        out.newLine();          
@@ -560,8 +563,9 @@ public class CladimedConverter {
 					
 				}
 			}			
-			
-			
+		// close file
+		line = RDF_CLOSE;
+		out.write(line);	
 		out.close();
 		}catch(IOException e){
 			e.printStackTrace();
