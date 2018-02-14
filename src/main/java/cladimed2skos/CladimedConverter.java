@@ -19,14 +19,16 @@ public class CladimedConverter {
 	private JFileChooser chooser;
 	private String destinationFolder;
 	
-	public static final String SKOS_COMCEPT_OPEN_PRE="<skos:Concept rdf:ID=\"http://cladimed.com/cladimed#";
+	//public static final String SKOS_COMCEPT_OPEN_PRE="<skos:Concept rdf:ID=\"http://cladimed.com/cladimed#";
+	public static final String SKOS_COMCEPT_OPEN_PRE="<skos:Concept rdf:about=\"http://cladimed.com/cladimed#";
+	
 	// code
 	public static final String SKOS_COMCEPT_OPEN_POS="\">";
 	public static final String SKOS_NOTATION_OPEN="<skos:notation rdf:datatype=\"http://www.w3.org/2001/XMLSchema#string\">";
 	// code
 	public static final String SKOS_NOTATION_CLOSE="</skos:notation>";
-	public static final String SKOS_CLASSIF_SIMPLE="<skos:inScheme rdf:resource=URI_ClassifSimple />";
-	public static final String SKOS_CLASSIF_COMPLETE="<skos:inScheme rdf:resource=URI_ClassifComplete />";
+	public static final String SKOS_CLASSIF_SIMPLE="<skos:inScheme rdf:resource=\"URI_ClassifSimple\" />";
+	public static final String SKOS_CLASSIF_COMPLETE="<skos:inScheme rdf:resource=\"URI_ClassifComplete\" />";
 	public static final String SKOS_DCT_OPEN="<dct:created rdf:datatype=\"http://www.w3.org/2001/XMLSchema#date\">";
 	// date
 	public static final String SKOS_DCT_CLOSE="</dct:created>";
@@ -49,8 +51,8 @@ public class CladimedConverter {
 	// conditionals
 	
 	// concept with column B empity
-	public static final String SKOS_TOP_CONCEPT_OF_SIMPLE="<skos:topConceptOf rdf:resource=URI_ClassifSimple />";
-	public static final String SKOS_TOP_CONCEPT_OF_COMPLETE="<skos:topConceptOf rdf:resource=URI_ClassifComplete />";	 	
+	public static final String SKOS_TOP_CONCEPT_OF_SIMPLE="<skos:topConceptOf rdf:resource=\"URI_ClassifSimple\" />";
+	public static final String SKOS_TOP_CONCEPT_OF_COMPLETE="<skos:topConceptOf rdf:resource=\"URI_ClassifComplete\" />";	 	
 	
 	// broader concept (0::1>
 	public static final String SKOS_BROADER_OPEN="<skos:broader rdf:resource=\"http://cladimed.com/cladimed#";
